@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Use TextMeshPro
+using TMPro;
+using UnityEngine.InputSystem; // Use TextMeshPro
 
 public class PlayerController : MonoBehaviour {
 
-   public float speed;
+    public Vector2 moveValue;
+    public float speed;
     private int count;
     private int numPickups = 6; //Put here the number of pickups you have.
     public TextMeshProUGUI scoreText;
@@ -16,8 +18,16 @@ public class PlayerController : MonoBehaviour {
         winText.text = "";
         SetCountText();
     }
-    void FixedUpdate() {} //NO changes
 
+    void OnMove(InputValue value) {
+        moveValue = value.Get<Vector2>();
+    }
+
+    void FixedUpdate() {
+        Vector3 movement = new Vector3(moveValue.x, 0.0f, moveValue.y);
+        GetComponent<Rigidbody>().AddForce(movement * speed * Time.fixedDeltaTime);
+    }
+    
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.tag == "PickUp") {
             other.gameObject.SetActive(false);
